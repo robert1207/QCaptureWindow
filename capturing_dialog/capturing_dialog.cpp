@@ -62,6 +62,10 @@ void CapturingDialog::on_captureButton_clicked() {
                                    capture_rect.x(), capture_rect.y(),
                                    capture_rect.width(),capture_rect.height());
 
+    p.setDevicePixelRatio(1);
+    D << "devicePixelRatio " <<  p.devicePixelRatio();
+    D << "depth " << p.depth();
+
     QString filePathName = "widget";
     filePathName += QDateTime::currentDateTime().toString("yyyy-MM-dd hh-mm-ss-zzz");
     filePathName += ".png";
