@@ -10,9 +10,15 @@
 CapturingDialog::CapturingDialog(QWidget *parent) :
         QDialog(parent)
 {
+
+    //remove question mark
+    Qt::WindowFlags flags= this->windowFlags();
+    setWindowFlags(flags&~Qt::WindowContextHelpButtonHint);
+
     SetupUI(this);
     RetranslateUi(this);
     InitResizeParam();
+    QMetaObject::connectSlotsByName(this);
 }
 
 CapturingDialog::~CapturingDialog()
@@ -30,16 +36,10 @@ void CapturingDialog::SetupUI(QDialog *dialog) {
     capture_button_->setObjectName(QString::fromUtf8("captureButton"));
     capture_button_->setGeometry(QRect(20, 20, 75, 23));
 
-    QMetaObject::connectSlotsByName(dialog);
-
     //设置无边框透明
     setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
-    QPalette dialog_palette = palette();
-    dialog_palette.setColor (QPalette::Background, QColor (0, 0 , 0, 0));
-    dialog_palette.setColor (QPalette::Foreground, QColor (0,0,0,0));
-    dialog->setPalette(dialog_palette);
-    // setAttribute(Qt::WA_TranslucentBackground);
-    //dialog->setWindowOpacity(0.5);//窗口中的所有东西都透明
+    setAttribute(Qt::WA_NoSystemBackground, true);
+    setAttribute(Qt::WA_TranslucentBackground, true);
 }
 
 void CapturingDialog::RetranslateUi(QDialog *dialog) {
@@ -108,9 +108,12 @@ void CapturingDialog::paintEvent(QPaintEvent *event)
     Q_UNUSED(event);
     QPainter painter(this);
 
+    //1 translucent bg, made for windows OS only
+     QRect frame_rect = this->rect();
+     painter.fillRect(frame_rect, QBrush(QColor(255,255,255, 1))); //at least 1 Translucent
+
     //view border
     painter.setPen(QPen(resize_boder_color_, resize_border_line_wide_));
-    QRect frame_rect = this->rect();
     frame_rect  = frame_rect.adjusted(resize_border_margin_, resize_border_margin_,
                         -resize_border_margin_, -resize_border_margin_);
     painter.drawRect(frame_rect);
